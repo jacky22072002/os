@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(&arr[j], &arr[j + 1]);
+            }
+        }
+    }
+}
+
+int look_disk_schedule(int requests[], int n, int start, int direction) {
+    int total_seek_time = 0;
+
+    
+    sort(requests, n);
+
+    int start_index;
+    for (int i = 0; i < n; i++) {
+        if (requests[i] >= start) {
+            start_index = i;
+            break;
+        }
+    }
+
+    for (int i = start_index; i < n && i >= 0; i += direction) {
+        total_seek_time += abs(requests[i] - start);
+        start = requests[i];
+    }
+
+    return total_seek_time;
+}
+
+int c_look_disk_schedule(int requests[], int n, int start) {
+    int total_seek_time = 0;
+
+    
+    sort(requests, n);
+
+    
+    int start_index;
+    for (int i = 0; i < n; i++) {
+        if (requests[i] >= start) {
+            start_index = i;
+            break;
+        }
+    }
+
+    
+    for (int i = start_index; i < n; i++) {
+        total_seek_time += abs(requests[i] - start);
+        start = requests[i];
+    }
+    for (int i = 0; i < start_index; i++) {
+        total_seek_time += abs(requests[i] - start);
+        start = requests[i];
+    }
+
+    return total_seek_time;
+}
+
+int main() {
+    int requests[] = {98, 183, 37, 122, 14, 124, 65, 67};
+    int n = sizeof(requests) / sizeof(requests[0]);
+    int start_position = 53;
+
+    int look_seek_time = look_disk_schedule(requests, n, start_position, 1);
+    printf("Look Seek Time: %d\n", look_seek_time);
+
+    int c_look_seek_time = c_look_disk_schedule(requests, n, start_position);
+    printf("C-Look Seek Time: %d\n", c_look_seek_time);
+
+    return 0;
+}
